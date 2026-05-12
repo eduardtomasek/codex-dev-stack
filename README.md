@@ -346,7 +346,7 @@ Automatic when `AGENTMEMORY_ENABLED=1`:
 
 Not automatic:
 
-- installing Claude/OpenClaw/Hermes-specific hook or plugin integrations
+- installing any extra client-specific hooks, plugins, or integrations beyond the managed MCP wiring in this stack
 - exposing the viewer publicly outside localhost
 
 ### Why the `iii` image is pinned

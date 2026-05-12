@@ -1,0 +1,76 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ai-dev-container:latest
+    container_name: ai-dev
+    tty: true
+    stdin_open: true
+    working_dir: /workspaces
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ${PROJECTS_DIR:-./projects}:/workspaces
+      - ai-dev-home:/home/dev
+    environment:
+      TZ: ${TZ:-Europe/Prague}
+      LLM_PROVIDER: ${LLM_PROVIDER:-codex-login}
+      AGENTMEMORY_ENABLED: ${AGENTMEMORY_ENABLED:-0}
+      AGENTMEMORY_BASE_URL: ${AGENTMEMORY_BASE_URL:-http://host.docker.internal:3211}
+      AGENTMEMORY_STREAM_URL: ${AGENTMEMORY_STREAM_URL:-ws://host.docker.internal:3212}
+      AGENTMEMORY_VIEWER_URL: ${AGENTMEMORY_VIEWER_URL:-http://host.docker.internal:3213}
+      AGENTMEMORY_SECRET: ${AGENTMEMORY_SECRET:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.1-codex-max}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-anthropic/claude-sonnet-4.5}
+      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
+      OLLAMA_API_KEY: ${OLLAMA_API_KEY:-}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5-coder:32b}
+      GREPAI_EMBEDDER: ${GREPAI_EMBEDDER:-ollama}
+      GREPAI_EMBED_MODEL: ${GREPAI_EMBED_MODEL:-nomic-embed-text-v2-moe}
+      GREPAI_EMBED_ENDPOINT: ${GREPAI_EMBED_ENDPOINT:-http://host.docker.internal:11434}
+      GREPAI_EMBED_DIMENSIONS: ${GREPAI_EMBED_DIMENSIONS:-768}
+      GIT_AUTHOR_NAME: ${GIT_AUTHOR_NAME:-}
+      GIT_AUTHOR_EMAIL: ${GIT_AUTHOR_EMAIL:-}
+      GIT_COMMITTER_NAME: ${GIT_COMMITTER_NAME:-}
+      GIT_COMMITTER_EMAIL: ${GIT_COMMITTER_EMAIL:-}
+
+  agentmemory:
+    image: iiidev/iii:${AGENTMEMORY_III_VERSION:-0.11.2}
+    container_name: ai-dev-agentmemory
+    ports:
+      - "127.0.0.1:49234:49134"
+      - "127.0.0.1:3211:3111"
+      - "127.0.0.1:3212:3112"
+      - "127.0.0.1:9564:9464"
+    volumes:
+      - agentmemory-data:/data
+      - ./config/agentmemory/iii-config.yaml:/app/config.yaml:ro
+    restart: unless-stopped
+
+  agentmemory-server:
+    image: ai-dev-container:latest
+    container_name: ai-dev-agentmemory-server
+    depends_on:
+      - agentmemory
+    command: ["start-agentmemory-server"]
+    ports:
+      - "127.0.0.1:3213:3113"
+    volumes:
+      - ai-dev-home:/home/dev
+    environment:
+      TZ: ${TZ:-Europe/Prague}
+      AGENTMEMORY_ENABLED: ${AGENTMEMORY_ENABLED:-1}
+      AGENTMEMORY_BASE_URL: http://agentmemory:3111
+      AGENTMEMORY_STREAM_URL: ws://agentmemory:3112
+      AGENTMEMORY_VIEWER_URL: http://127.0.0.1:3113
+      AGENTMEMORY_SECRET: ${AGENTMEMORY_SECRET:-}
+    restart: unless-stopped
+
+volumes:
+  ai-dev-home:
+  agentmemory-data:

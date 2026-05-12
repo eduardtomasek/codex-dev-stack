@@ -10,6 +10,7 @@ if [[ -n "${GIT_AUTHOR_EMAIL:-}" ]]; then git config --global user.email "$GIT_A
 install-bundled-skills || true
 cleanup-codex-duplicate-skills || true
 configure-codex
+configure-ripgrep-mcp
 configure-grepai-mcp
 configure-serena-mcp
 configure-gitnexus-mcp
@@ -34,6 +35,7 @@ Commands:
   codex                         # OpenAI Codex CLI
   opencode                      # OpenCode CLI
   cleanup-codex-duplicate-skills # Remove old shared-skill duplicates from ~/.codex/skills
+  configure-ripgrep-mcp         # Wire ripgrep MCP for Codex and OpenCode
   configure-grepai-mcp          # Wire GrepAI MCP for Codex and OpenCode
   configure-serena-mcp          # Wire Serena MCP for Codex and OpenCode
   configure-gitnexus-mcp        # Wire GitNexus MCP for Codex and OpenCode

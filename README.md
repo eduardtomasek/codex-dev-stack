@@ -7,6 +7,7 @@ Included tools:
 - `codex` for OpenAI Codex CLI
 - `opencode` for OpenCode CLI
 - `grepai` for semantic search and call tracing
+- `ripgrep` / `rg` for fast exact search and file discovery
 - `serena` for symbol-aware navigation and MCP server support
 - `gitnexus` for knowledge-graph-based code analysis
 - `agentmemory` for the upstream memory server CLI
@@ -38,7 +39,7 @@ This repository solves that with a single container image:
 - the image installs the main tools
 - [`docker-compose.yml`](./docker-compose.yml) passes provider settings through environment variables
 - the entrypoint configures Codex for the selected provider
-- the entrypoint wires managed MCP servers for GrepAI, Serena, GitNexus, and optional AgentMemory
+- the entrypoint wires managed MCP servers for ripgrep, GrepAI, Serena, GitNexus, and optional AgentMemory
 - the entrypoint installs bundled skills into the user's home directory
 - the persistent `ai-dev-home` volume keeps login state and user config between runs
 - when the container starts directly inside a Git repository, it can automatically prepare the GrepAI project config
@@ -81,6 +82,8 @@ Practical consequences:
   generates `~/.codex/config.toml` for the selected provider
 - [`./scripts/configure-agentmemory.sh`](./scripts/configure-agentmemory.sh)
   adds managed `agentmemory` MCP config for Codex and OpenCode when enabled
+- [`./scripts/configure-ripgrep-mcp.sh`](./scripts/configure-ripgrep-mcp.sh)
+  adds managed `mcp-ripgrep@latest` MCP config for Codex and OpenCode
 - [`./scripts/start-agentmemory-server.sh`](./scripts/start-agentmemory-server.sh)
   starts the upstream AgentMemory server CLI inside the current container
 - [`./scripts/configure-grepai-mcp.sh`](./scripts/configure-grepai-mcp.sh)
@@ -148,6 +151,14 @@ Then move into a mounted project:
 ```bash
 cd /workspaces/my-project
 ```
+
+At container startup, the entrypoint auto-wires MCP servers for:
+
+- `ripgrep` via `npx -y mcp-ripgrep@latest`
+- `grepai` via `grepai mcp-serve`
+- `serena` via `serena start-mcp-server --context codex --project-from-cwd`
+- `gitnexus` via `gitnexus mcp`
+- optional `agentmemory` via `agentmemory-mcp` when `AGENTMEMORY_ENABLED=1`
 
 ### 4. Optional: enable `agentmemory`
 

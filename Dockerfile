@@ -53,6 +53,7 @@ RUN curl -sSL https://raw.githubusercontent.com/yoanbernabeu/grepai/main/install
 COPY --chown=dev:dev scripts/entrypoint.sh /usr/local/bin/ai-dev-entrypoint
 COPY --chown=dev:dev scripts/configure-codex.sh /usr/local/bin/configure-codex
 COPY --chown=dev:dev scripts/configure-agentmemory.sh /usr/local/bin/configure-agentmemory
+COPY --chown=dev:dev scripts/configure-ripgrep-mcp.sh /usr/local/bin/configure-ripgrep-mcp
 COPY --chown=dev:dev scripts/configure-grepai-mcp.sh /usr/local/bin/configure-grepai-mcp
 COPY --chown=dev:dev scripts/configure-serena-mcp.sh /usr/local/bin/configure-serena-mcp
 COPY --chown=dev:dev scripts/configure-gitnexus-mcp.sh /usr/local/bin/configure-gitnexus-mcp
@@ -65,7 +66,7 @@ COPY --chown=dev:dev scripts/doctor.sh /usr/local/bin/ai-dev-doctor
 COPY --chown=dev:dev skills /opt/ai-dev/skills
 
 USER root
-RUN chmod +x /usr/local/bin/ai-dev-entrypoint /usr/local/bin/configure-codex /usr/local/bin/configure-agentmemory /usr/local/bin/configure-grepai-mcp /usr/local/bin/configure-serena-mcp /usr/local/bin/configure-gitnexus-mcp /usr/local/bin/configure-grepai /usr/local/bin/cleanup-codex-duplicate-skills /usr/local/bin/start-agentmemory-server /usr/local/bin/ai-dev-init-project /usr/local/bin/install-bundled-skills /usr/local/bin/ai-dev-doctor
+RUN chmod +x /usr/local/bin/ai-dev-entrypoint /usr/local/bin/configure-codex /usr/local/bin/configure-agentmemory /usr/local/bin/configure-ripgrep-mcp /usr/local/bin/configure-grepai-mcp /usr/local/bin/configure-serena-mcp /usr/local/bin/configure-gitnexus-mcp /usr/local/bin/configure-grepai /usr/local/bin/cleanup-codex-duplicate-skills /usr/local/bin/start-agentmemory-server /usr/local/bin/ai-dev-init-project /usr/local/bin/install-bundled-skills /usr/local/bin/ai-dev-doctor
 USER dev
 
 WORKDIR /workspaces

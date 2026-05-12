@@ -10,6 +10,19 @@ codex
 
 If you start directly in the repository with `-w /workspaces/my-project`, the entrypoint will also prepare `.grepai/config.yaml` in the repository root.
 
+The entrypoint also auto-wires ripgrep MCP for:
+
+- `codex` in `~/.codex/config.toml`
+- `opencode` in `~/.config/opencode/opencode.json`
+
+The managed Codex block uses:
+
+```toml
+[mcp_servers.ripgrep]
+command = "npx"
+args = ["-y", "mcp-ripgrep@latest"]
+```
+
 The entrypoint also auto-wires GrepAI MCP for:
 
 - `codex` in `~/.codex/config.toml`

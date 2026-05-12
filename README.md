@@ -9,6 +9,8 @@ Included tools:
 - `grepai` for semantic search and call tracing
 - `serena` for symbol-aware navigation and MCP server support
 - `gitnexus` for knowledge-graph-based code analysis
+- `agentmemory` for the upstream memory server CLI
+- `agentmemory-mcp` for AgentMemory MCP stdio integration
 - standard developer utilities such as `git`, `rg`, `jq`, `node`, `npm`, and `python3`
 - `bubblewrap` for Codex Linux sandbox prerequisites
 
@@ -17,7 +19,7 @@ This repository is designed so that:
 - your projects stay on the host machine
 - the container has a persistent home directory for logins and tool config
 - switching between LLM providers is simple
-- optional `agentmemory` wiring can be enabled for Codex and OpenCode
+- optional `agentmemory` MCP wiring and server runtime can be enabled for Codex and OpenCode
 - GrepAI embeddings can run locally through Ollama
 - the environment is usable immediately after container startup
 
@@ -36,6 +38,7 @@ This repository solves that with a single container image:
 - the image installs the main tools
 - [`docker-compose.yml`](./docker-compose.yml) passes provider settings through environment variables
 - the entrypoint configures Codex for the selected provider
+- the entrypoint wires managed MCP servers for GrepAI, Serena, GitNexus, and optional AgentMemory
 - the entrypoint installs bundled skills into the user's home directory
 - the persistent `ai-dev-home` volume keeps login state and user config between runs
 - when the container starts directly inside a Git repository, it can automatically prepare the GrepAI project config
@@ -46,6 +49,7 @@ This repository solves that with a single container image:
 
 - `dev` is the interactive shell container for daily work
 - `agentmemory` is an optional pinned `iii` sidecar for memory workflows
+- `agentmemory-server` is an optional upstream Node.js service for AgentMemory REST/viewer workflows
 - host projects are mounted into `/workspaces`
 - the `dev` user's home directory is persisted in `/home/dev`
 
@@ -77,6 +81,8 @@ Practical consequences:
   generates `~/.codex/config.toml` for the selected provider
 - [`./scripts/configure-agentmemory.sh`](./scripts/configure-agentmemory.sh)
   adds managed `agentmemory` MCP config for Codex and OpenCode when enabled
+- [`./scripts/start-agentmemory-server.sh`](./scripts/start-agentmemory-server.sh)
+  starts the upstream AgentMemory server CLI inside the current container
 - [`./scripts/configure-grepai-mcp.sh`](./scripts/configure-grepai-mcp.sh)
   adds managed `grepai mcp-serve` MCP config for Codex and OpenCode
 - [`./scripts/configure-serena-mcp.sh`](./scripts/configure-serena-mcp.sh)
